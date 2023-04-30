@@ -1,5 +1,9 @@
 annotations*/
 
+*.weights
+*.txt
+*.cfg
+
 *.zip
 images/
 
