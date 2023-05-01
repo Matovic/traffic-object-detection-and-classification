@@ -5,7 +5,7 @@ import torch
 from albumentations.pytorch import ToTensorV2
 #from utils import seed_everything
 
-DATASET = '../imgs'
+DATASET = '../../zadanie2' #'../imgs'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # seed_everything()  # If you want deterministic behavior
 NUM_WORKERS = 4
@@ -24,7 +24,7 @@ LOAD_MODEL = False
 SAVE_MODEL = True
 CHECKPOINT_FILE = "checkpoint.pth.tar"
 IMG_DIR = DATASET + "/images/"
-LABEL_DIR = DATASET + "/labels/"
+LABEL_DIR = "../label/"
 
 ANCHORS = [
     [(0.28, 0.22), (0.38, 0.48), (0.9, 0.78)],
