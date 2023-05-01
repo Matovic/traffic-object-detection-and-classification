@@ -3,6 +3,7 @@ annotations*/
 *.weights
 *.txt
 *.cfg
+*.csv
 
 *.zip
 images/
