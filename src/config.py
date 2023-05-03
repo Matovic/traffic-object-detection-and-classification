@@ -11,7 +11,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 NUM_WORKERS = 4
 BATCH_SIZE = 32
 IMAGE_SIZE = 416
-NUM_CLASSES = 80
+NUM_CLASSES = 4 #classes to clasificate (vehicle,pedestrian,...)
 LEARNING_RATE = 3e-5
 WEIGHT_DECAY = 1e-4
 NUM_EPOCHS = 12
@@ -38,14 +38,14 @@ ANCHORS = [
 scale = 1.1
 train_transforms = A.Compose(
     [
-        A.LongestMaxSize(max_size=int(IMAGE_SIZE * scale)),
-        A.PadIfNeeded(
-            min_height=int(IMAGE_SIZE * scale),
-            min_width=int(IMAGE_SIZE * scale),
-            border_mode=cv2.BORDER_CONSTANT,
-        ),
-        A.RandomCrop(width=IMAGE_SIZE, height=IMAGE_SIZE),
-        A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=0.4),
+        # A.LongestMaxSize(max_size=int(IMAGE_SIZE * scale)),
+        # A.PadIfNeeded(
+        #     min_height=int(IMAGE_SIZE * scale),
+        #     min_width=int(IMAGE_SIZE * scale),
+        #     border_mode=cv2.BORDER_CONSTANT,
+        # ),
+        # A.RandomCrop(width=IMAGE_SIZE, height=IMAGE_SIZE),
+        # A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=0.4),
         # # A.OneOf(
         # #     [
         # #         A.ShiftScaleRotate(
@@ -55,24 +55,24 @@ train_transforms = A.Compose(
         # #     ],
         # #     p=1.0,
         # # ),
-        A.HorizontalFlip(p=0.5),
-        A.Blur(p=0.1),
-        A.CLAHE(p=0.1),
-        A.Posterize(p=0.1),
-        A.ToGray(p=0.1),
-        A.ChannelShuffle(p=0.05),
-        A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
+        # A.HorizontalFlip(p=0.5),
+        # A.Blur(p=0.1),
+        # A.CLAHE(p=0.1),
+        # A.Posterize(p=0.1),
+        # A.ToGray(p=0.1),
+        # A.ChannelShuffle(p=0.05),
+        # A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
         ToTensorV2(),
     ],
     bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[],),
 )
 test_transforms = A.Compose(
     [
-        # A.LongestMaxSize(max_size=IMAGE_SIZE),
-        # A.PadIfNeeded(
-        #     min_height=IMAGE_SIZE, min_width=IMAGE_SIZE, border_mode=cv2.BORDER_CONSTANT
-        # ),
-        # A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
+        A.LongestMaxSize(max_size=IMAGE_SIZE),
+        A.PadIfNeeded(
+            min_height=IMAGE_SIZE, min_width=IMAGE_SIZE, border_mode=cv2.BORDER_CONSTANT
+        ),
+        A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
         ToTensorV2(),
     ],
     bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[], check_each_transform= True),
