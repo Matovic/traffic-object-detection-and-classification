@@ -5,7 +5,7 @@ import torch
 from albumentations.pytorch import ToTensorV2
 #from utils import seed_everything
 
-DATASET = '../../zadanie2' #'../imgs'
+DATASET = '..'#'../../zadanie2' #'../imgs'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # seed_everything()  # If you want deterministic behavior
 NUM_WORKERS = 4
@@ -25,6 +25,8 @@ SAVE_MODEL = True
 CHECKPOINT_FILE = "checkpoint.pth.tar"
 IMG_DIR = DATASET + "/images/"
 LABEL_DIR = "../label/"
+IMAGE_WIDTH = 1920
+IMAGE_HEIGHT = 1080
 
 ANCHORS = [
     [(0.28, 0.22), (0.38, 0.48), (0.9, 0.78)],
@@ -44,15 +46,15 @@ train_transforms = A.Compose(
         ),
         A.RandomCrop(width=IMAGE_SIZE, height=IMAGE_SIZE),
         A.ColorJitter(brightness=0.6, contrast=0.6, saturation=0.6, hue=0.6, p=0.4),
-        # A.OneOf(
-        #     [
-        #         A.ShiftScaleRotate(
-        #             rotate_limit=10, p=0.4, border_mode=cv2.BORDER_CONSTANT
-        #         ),
-        #         A.IAAAffine(shear=10, p=0.4, mode="constant"),
-        #     ],
-        #     p=1.0,
-        # ),
+        # # A.OneOf(
+        # #     [
+        # #         A.ShiftScaleRotate(
+        # #             rotate_limit=10, p=0.4, border_mode=cv2.BORDER_CONSTANT
+        # #         ),
+        # #         A.IAAAffine(shear=10, p=0.4, mode="constant"),
+        # #     ],
+        # #     p=1.0,
+        # # ),
         A.HorizontalFlip(p=0.5),
         A.Blur(p=0.1),
         A.CLAHE(p=0.1),
@@ -66,14 +68,14 @@ train_transforms = A.Compose(
 )
 test_transforms = A.Compose(
     [
-        A.LongestMaxSize(max_size=IMAGE_SIZE),
-        A.PadIfNeeded(
-            min_height=IMAGE_SIZE, min_width=IMAGE_SIZE, border_mode=cv2.BORDER_CONSTANT
-        ),
-        A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
+        # A.LongestMaxSize(max_size=IMAGE_SIZE),
+        # A.PadIfNeeded(
+        #     min_height=IMAGE_SIZE, min_width=IMAGE_SIZE, border_mode=cv2.BORDER_CONSTANT
+        # ),
+        # A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
         ToTensorV2(),
     ],
-    bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[]),
+    bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[], check_each_transform= True),
 )
 
 PASCAL_CLASSES = [
