@@ -5,11 +5,11 @@ import torch
 from albumentations.pytorch import ToTensorV2
 #from utils import seed_everything
 
-DATASET = '..'#'../../zadanie2' #'../imgs'
+DATASET = '../../zadanie2' #'../imgs'
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 # seed_everything()  # If you want deterministic behavior
 NUM_WORKERS = 4
-BATCH_SIZE = 32
+BATCH_SIZE = 2#8#32
 IMAGE_SIZE = 416
 NUM_CLASSES = 4 #classes to clasificate (vehicle,pedestrian,...)
 LEARNING_RATE = 3e-5
@@ -75,7 +75,7 @@ test_transforms = A.Compose(
         A.Normalize(mean=[0, 0, 0], std=[1, 1, 1], max_pixel_value=255,),
         ToTensorV2(),
     ],
-    bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[], check_each_transform= True),
+    bbox_params=A.BboxParams(format="yolo", min_visibility=0.4, label_fields=[], check_each_transform=True),
 )
 
 PASCAL_CLASSES = [
