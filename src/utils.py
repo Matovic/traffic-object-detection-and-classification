@@ -539,6 +539,7 @@ def check_class_accuracy(model, loader, threshold):
     for idx, (x, y) in enumerate(tqdm(loader)):
         if idx == 100:
             break
+        x = x.float()
         x = x.to(config.DEVICE)
         with torch.no_grad():
             out = model(x)
