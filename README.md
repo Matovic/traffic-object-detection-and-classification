@@ -32,6 +32,176 @@ Každý obrázok mal vlastný txt súbor, v ktorom každý riadok opisuje jeden 
 
 
 ### 2. Data Preprocessing
+Pre naše potreby sme si z videí vytvorili [obrázkový dataset](https://stubask-my.sharepoint.com/:u:/g/personal/xmatovice_stuba_sk/EV-2EgAW7A1ChzYItOfhf-UBBGEGeqsxosO734fkol7mSg) a k tomu [anotácie](https://stubask-my.sharepoint.com/:u:/g/personal/xmatovice_stuba_sk/EXG0VM1S4z1AlMC1Wt2hwVkB4upDCQP30-kMe0X6cTcPsw) nasledujúcim kódom:
+
+```python3
+def save_img_annotations(dataset: PIE_peds, folder: str):# -> None:
+    """
+    Save images into given folder and also CSV annotations. 
+
+    :param dataset: PIE_peds class, where all paths are set. 
+    :param folder: folder train or val or test to save pedestrians.
+    """
+
+    assert folder in ['train', 'val', 'test']
+
+    img_width = 1920
+    img_height = 1080
+
+    target = dict()
+    target['set'] = []
+    target['video'] = []
+    target['frame'] = []
+    target['Category'] = []
+    target['x1'] = []
+    target['y1'] = []
+    target['width'] = []
+    target['height'] = []
+
+    target_v = dict()
+    target_v['set'] = []
+    target_v['video'] = []
+    target_v['frame'] = []
+    target_v['Category'] = []
+    target_v['x1'] = []
+    target_v['y1'] = []
+    target_v['width'] = []
+    target_v['height'] = []
+
+    target_l = dict()
+    target_l['set'] = []
+    target_l['video'] = []
+    target_l['frame'] = []
+    target_l['Category'] = []
+    target_l['x1'] = []
+    target_l['y1'] = []
+    target_l['width'] = []
+    target_l['height'] = []
+
+    target_s = dict()
+    target_s['set'] = []
+    target_s['video'] = []
+    target_s['frame'] = []
+    target_s['Category'] = []
+    target_s['x1'] = []
+    target_s['y1'] = []
+    target_s['width'] = []
+    target_s['height'] = []
+    
+    category = dict()
+    category['p'] = 0   # pedestrian
+    category['v'] = 1   # vehicle
+    category['l'] = 2   # traffic light
+    category['s'] = 3   # sign
+    #img_counter = 0
+    for set_name in dataset.set_dir:
+        for video in dataset.set_dir[set_name]:
+            annotations = pie._get_annotations(set_name, video)
+            for frame in dataset.set_dir[set_name][video]: 
+                for idx in annotations['ped_annotations']: #['ped_annotations']:
+                    frame_idx = int(frame[:-4])
+                    if frame_idx in annotations['ped_annotations'][idx]['frames']:
+                        frame_key = annotations['ped_annotations'][idx]['frames'].index(frame_idx)
+                        
+                        bbox = annotations['ped_annotations'][idx]['bbox'][frame_key] 
+                        
+                        # BBox for pedestrian
+                        x1 = bbox[0]
+                        y1 = bbox[1]
+                        x2 = bbox[2]
+                        y2 = bbox[3]
+                        width = x2 - x1
+                        height = y2 - y1
+
+                        x, y, w, h = convert((img_width, img_height), (x1, x2, y1, y2))
+    
+                        target['set'].append(set_name)
+                        target['video'].append(video)
+                        target['frame'].append(frame[:-4])
+                        target['Category'].append(category['p'])
+                        target['x1'].append(x)
+                        target['y1'].append(y)
+                        target['width'].append(w)
+                        target['height'].append(h)
+                    
+                for idx in annotations['traffic_annotations']:
+                    frame_idx = int(frame[:-4])
+                    if frame_idx in annotations['traffic_annotations'][idx]['frames']: #['ped_annotations'][idx]['frames']:
+                        frame_key = annotations['traffic_annotations'][idx]['frames'].index(frame_idx)#['ped_annotations'][idx]['frames'].index(frame_idx)
+                        
+                        bbox = annotations['traffic_annotations'][idx]['bbox'][frame_key] 
+                        # BBox for traffic
+                        x1 = bbox[0]
+                        y1 = bbox[1]
+                        x2 = bbox[2]
+                        y2 = bbox[3]
+
+                        x, y, w, h = convert((img_width, img_height), (x1, x2, y1, y2))
+                        
+                        if idx[-1:] == 'v':
+                            target_v['set'].append(set_name)
+                            target_v['video'].append(video)
+                            target_v['frame'].append(frame[:-4])
+                            target_v['Category'].append(category['v'])
+                            target_v['x1'].append(x)
+                            target_v['y1'].append(y)
+                            target_v['width'].append(w)
+                            target_v['height'].append(h)
+                        
+                        elif idx[-1:] == 'l':
+                            target_l['set'].append(set_name)
+                            target_l['video'].append(video)
+                            target_l['frame'].append(frame[:-4])
+                            target_l['Category'].append(category['l'])
+                            target_l['x1'].append(x)
+                            target_l['y1'].append(y)
+                            target_l['width'].append(w)
+                            target_l['height'].append(h)
+
+                        elif idx[-1:] == 's':
+                            target_s['set'].append(set_name)
+                            target_s['video'].append(video)
+                            target_s['frame'].append(frame[:-4])
+                            target_s['Category'].append(category['s'])
+                            target_s['x1'].append(x)
+                            target_s['y1'].append(y)
+                            target_s['width'].append(w)
+                            target_s['height'].append(h)
+    return target, target_v, target_l, target_s
+```
+
+A anotácie sme vytvorili a upravili nasledovne spolu s vytvoreným mapovaním na obrázok s príslušnými anotáciami:
+
+```python3
+def maka_dataset(result:pd.DataFrame, folder:str):
+    map_ = dict()
+    map_['img'] = []
+    map_['annotation'] = []
+
+    for index, row in result.iterrows():
+        set_ = row['set']           
+        video = row['video']
+        frame = row['frame']
+        map_['img'].append(set_ + '/' + video + '/' + frame + '.png')
+        
+        df = result.loc[(result['set'] == set_) & 
+                        (result['video'] == video) &
+                        (result['frame'] == frame)].iloc[:, -5:]
+        
+        annotations_path = '../label/' + set_ + '/' + video + '/' + frame + '.txt'
+
+        #export DataFrame to text file
+        with open(annotations_path, 'w') as f:
+            df_string = df.to_string(header=False, index=False)
+            f.write(df_string)
+        
+        map_['annotation'].append(set_ + '/' + video + '/' + frame + '.txt')
+        
+    path = '../' + folder + '.csv'
+    df = pd.DataFrame(map_)
+    df.to_csv(path, index=False, header=False)
+```
+
 Na predspracovanie a augmentáciu sme použili knižnicu albumentations, ktorá pri načítaní obrázka augmentuje obrázok s určitou pravdepodobnosťou rôznych možností.
 ```python3
 train_transforms = A.Compose(
