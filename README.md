@@ -628,3 +628,18 @@ Zadanie: Detekcia  chodcov 
 -   README 
 
 -   Refactoring kódu
+
+07.05 - spravené
+-   Rozbehanie WandB a vygenerovanie pdf reportu 
+
+-   Experimentovanie s hyperparametrami prostredníctvom WandB 
+    -   batch size
+    -   počet epôch
+    -   learning rate
+    -   weight decay
+
+-   Napísané readme pre toto zadanie
+
+-   Refactoring kódu - odstránenie zbytočných výpisov, prispôsobenie notebooku pre kaggle trénovanie
+
+- Rozbehanie na najlepších parametroch
