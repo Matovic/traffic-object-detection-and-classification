@@ -453,9 +453,9 @@ Zadanie: Detekcia  chodcov 
 
 -   Rozframeovanie  videí  na  snímky 
 
--   Iba anotované  snímky  nakoľko  celý dataset by mal cca 3TB 
+    -    Iba anotované  snímky  nakoľko  celý dataset by mal cca 3TB 
 
--   Vytiahnuté  niekoľkých  anotovaných  snímok(zhruba 1000) nakoľko  všetky frame-y majú  cca 1TB 
+    -   Vytiahnuté  niekoľkých  anotovaných  snímok(zhruba 1000) nakoľko  všetky frame-y majú  cca 1TB 
 
 -   Načítanie  datasetu  a  anotácií 
 
@@ -463,7 +463,7 @@ Zadanie: Detekcia  chodcov 
 
 -   Spustenie natrénovaného  modelu  YOLOv3 z knižnice OpenCV na  naších  testovacích  dátach 
 
--   Detekcia a klasifikácia  áut, chodcov, semaforov, ... 
+    -   Detekcia a klasifikácia  áut, chodcov, semaforov, ... 
 
 -   PyTorch 
 
@@ -471,53 +471,53 @@ Zadanie: Detekcia  chodcov 
 
 -   Možné riešenia 
 
--   Upravovat  obrazky 
+    -   Upravovat  obrazky 
 
--   Slicovat  obrazky na mensie 
+        -   Slicovat  obrazky na mensie 
 
--   Sliding  window 
+    -   Sliding  window 
 
--   Moze/nemusi byt ci prechadza cez prechod 
+    -   Moze/nemusi byt ci prechadza cez prechod 
 
--   Skor ci sa pozera na nas alebo nie, nez ci prechadza cez prechod(problem s malo snimkami) 
+    -   Skor ci sa pozera na nas alebo nie, nez ci prechadza cez prechod(problem s malo snimkami) 
 
--   Ak spravime vlastne yolo, staci  hladat chodcov 
+    -   Ak spravime vlastne yolo, staci  hladat chodcov 
 
--   Porovnať s YOLOv3 z OpenCV 
+    -   Porovnať s YOLOv3 z OpenCV 
 
 03.05. - spravené 
 
 -   Data  preprocessing  
 
--   Vytvorenie vlastných anotácií 
+    -   Vytvorenie vlastných anotácií 
 
--   Extrakcia Bounding Boxov pre chodcov, vozidlá, semafory a dopravné značky 
+    -   Extrakcia Bounding Boxov pre chodcov, vozidlá, semafory a dopravné značky 
 
--   Konverzia bounding boxov z formatu x1, y1, x2, y2 na formát x_middle, y _middle, width, height  
+    -   Konverzia bounding boxov z formatu x1, y1, x2, y2 na formát x_middle, y _middle, width, height  
 
--   Preškálovanie BBoxov do rozsahu 0-1 
+    -   Preškálovanie BBoxov do rozsahu 0-1 
 
--   Floating  zaokruhlovanie  BBoxov nám dávalo menšie ako 0 a väčšie ako 1, takže to bola radosť debugovať 
+    -   Floating  zaokruhlovanie  BBoxov nám dávalo menšie ako 0 a väčšie ako 1, takže to bola radosť debugovať 
 
--   Pridanie kategórie pre boundig box -- chodec, vozidlo, semafor, dopravná značka 
+    -   Pridanie kategórie pre boundig box -- chodec, vozidlo, semafor, dopravná značka 
 
--   Každý obrázok má svoj textový súbor s anotáciami kategória, x_middle, y _middle, width, height, kde kategória je chodec/vozidlo/semafor/dopravná značka 
+    -   Každý obrázok má svoj textový súbor s anotáciami kategória, x_middle, y _middle, width, height, kde kategória je chodec/vozidlo/semafor/dopravná značka 
 
--   CSV súbor, ktorý mapuje lokalitu obrázku s príslošnym súborom pre anotácie 
+    -   CSV súbor, ktorý mapuje lokalitu obrázku s príslošnym súborom pre anotácie 
 
 -   Augmentácie 
 
--   Využitie modulu albumentations 
+    -   Využitie modulu albumentations 
 
--   Preškálovanie na 416x416 
+    -   Preškálovanie na 416x416 
 
--   Rotácie obrázkov 
+    -   Rotácie obrázkov 
 
 -   Návrh architektúry, inšpirovane YOLO 
 
--   Konvolučné a reziduálne bloky 
+    -   Konvolučné a reziduálne bloky 
 
--   Loss  function 
+    -   Loss  function 
 
 -   Trénovacia funkcia 
 
