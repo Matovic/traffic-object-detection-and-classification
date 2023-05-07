@@ -261,6 +261,12 @@ class EarlyStopper:
         return False
 ```
 
+Najlepšie parametre:
+ - BATCH_SIZE: 8,
+ - LEARNING_RATE': 0.011452697406891536,
+ - NUM_EPOCHS': 10,
+ - WEIGHT_DECAY': 0.05543324440170564
+
 Spustenie pre najlepšie parametre:
 ```python3
 def best_run():
