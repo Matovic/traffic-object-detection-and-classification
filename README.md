@@ -4,6 +4,14 @@
  - [Erik Matovič](https://github.com/Matovic)
  - Jakub Horvat 
 
+## Existujúci OpenCV YOLOv3 model
+Prv sme sa pozreli na existujúce riešenia a implementovali sme detekciu objektov použitím predtrénováneho YOLOv3 modelu z knižnice OpenCV. Výsledky sme priložili v samostatných Jupyter notebookoch. Následne sme sa posnažili implementovať vlastnú verziu YOLOv3 modelu na základe nasledujúceho [článku](https://sannaperzon.medium.com/yolov3-implementation-with-training-setup-from-scratch-30ecb9751cb0).
+
+Ukážka z OpenCV YOLOv3 modelu:
+ <p align="center">
+	<img src="./outputs/yolov3/object_detection.png">
+</p>
+
 ## Solution
 Používame PIE dataset z  [pie_data Python file](./src/pie_data.py) na vytvorenie trénovacích, testovacích a validačných dát. Pre extrahovanie anotácii je vytvorený pie_data súbor.
 
@@ -231,7 +239,7 @@ $L_{class}$ je stratová funkcia pre správne klasifikovanie bboxu triede.
 
 Ako optimizer je použitý Adam. Veľkosť minibatch je 8, počet epôch je 10, learning rate je 0.011452697406891536 a weight decay je rovný 0.05543324440170564.
 
-Trénovanie a validácia používajú early stopping validation loss.
+Trénovanie a validácia používajú early stopping validation loss:
 ```python3
 class EarlyStopper:
     def __init__(self, patience=1, min_delta=0):
@@ -253,7 +261,7 @@ class EarlyStopper:
         return False
 ```
 
-
+Spustenie pre najlepšie parametre:
 ```python3
 def best_run():
     api = wandb.Api()
@@ -414,7 +422,8 @@ def best_run():
 
 best_run()
 ```
-Sledovanie train loss je pomocou Weights and Biases. Training loss sa znižuj, čo znamená, že model sa učí na trénovacích dátach.
+
+Sledovanie train loss je pomocou Weights and Biases. Training loss sa znižuje, čo znamená, že model sa učí na trénovacích dátach.
  <p align="center">
 	<img src="./outputs/train_loss.png">
 </p>
@@ -434,8 +443,97 @@ Noobject accuracy:
  <p align="center">
 	<img src="./outputs/noobj_acc.png">
 </p>
+Najlepšie parametre boli vybrané podľa najmenšej validačnej stratovej funkcie. Vizualizácia pre hyperparameter search:
+ <p align="center">
+	<img src="./outputs/wandb.png">
+</p>
 
-%### 5. Testing
+### 5. Testing
+Na testovanie sme použili nasledovný kód:
+```python3
+def test_fn(loader, model, optimizer, scaled_anchors):
+    """
+    Evaulation
+    """    
+    losses = []
+    batches_counter = 0
+    counter = 0
+
+    # init epoch train counters
+    tot_class_preds, correct_class = 0, 0
+    tot_noobj, correct_noobj = 0, 0
+    tot_obj, correct_obj = 0, 0
+    
+    # disable gradient calculation
+    with torch.no_grad():
+        for batch_idx, (x, y) in enumerate(loader): #enumerate(loop):
+            x = x.float()
+            x = x.to(config.DEVICE)
+            y0, y1, y2 = (
+                y[0].to(config.DEVICE),
+                y[1].to(config.DEVICE),
+                y[2].to(config.DEVICE),
+            )
+
+            y_hat = model(x)
+
+            correct_class_, tot_class_preds_, correct_noobj_, tot_noobj_, \
+                correct_obj_, tot_obj_ = check_class_accuracy(y, y_hat, config.CONF_THRESHOLD)
+            #print(correct_class_)
+            
+            correct_class += correct_class_
+            tot_class_preds += tot_class_preds_
+            correct_noobj += correct_noobj_
+            tot_noobj += tot_noobj_
+            correct_obj += correct_obj_
+            tot_obj += tot_obj_
+            
+            batches_counter+=1
+            
+            # vizualizácia BBoxov s vybraných snímkov
+            if counter < 19:
+                counter += 1
+                if batches_counter % 16 == 0:
+                    boxes = []
+                    for i in range(y[0].shape[1]):
+                        anchor = scaled_anchors[i]
+                        print("Shape of anchor: ",anchor.shape)
+                        print("Loader y: ",y[i].shape)
+                        boxes += cells_to_bboxes(
+                            y_hat[i], is_preds=False, S=y_hat[i].shape[2], anchors=anchor
+                        )[0]
+                    boxes = nms(boxes, iou_threshold=1, threshold=0.7, box_format="midpoint")
+                    #print("BOXES: ",boxes)
+                    #pprint(boxes)
+                    plot_image(x[0].permute(1, 2, 0).to("cpu"), boxes)
+
+
+    class_acc = (correct_class/(tot_class_preds+1e-16))*100
+    no_obj_acc = (correct_noobj/(tot_noobj+1e-16))*100
+    obj_acc = (correct_obj/(tot_obj+1e-16))*100
+    
+    pred_boxes, true_boxes = get_evaluation_bboxes(
+        loader,
+        model,
+        iou_threshold=config.NMS_IOU_THRESH,
+        anchors=config.ANCHORS,
+        threshold=config.CONF_THRESHOLD,
+    )
+    mapval = mean_average_precision(
+        pred_boxes,
+        true_boxes,
+        iou_threshold=config.MAP_IOU_THRESH,
+        box_format="midpoint", #midpoint originally
+        num_classes=config.NUM_CLASSES,
+    )
+    
+    return class_acc, no_obj_acc, obj_acc, mapval
+```
+
+Výsledné riešenia:
+ <p align="center">
+	<img src="./outputs/output.png">
+</p>
 
 
 ## Conclusion
