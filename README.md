@@ -9,7 +9,7 @@ Prv sme sa pozreli na existujúce riešenia a implementovali sme detekciu objekt
 
 Ukážka z OpenCV YOLOv3 modelu:
  <p align="center">
-	<img src="./outputs/yolov3/object_detection.png">
+	<img src="./outputs/yolov3/object_detection.jpg">
 </p>
 
 ## Solution
