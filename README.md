@@ -607,17 +607,29 @@ Pri validation loss krivka neklesá, a teda je zastavená early stopppingom.
  <p align="center">
 	<img src="./outputs/val_loss.png">
 </p>
-Class accuracy:
+Train class accuracy:
  <p align="center">
 	<img src="./outputs/class_acc.png">
 </p>
-Object accuracy:
+Train object accuracy:
  <p align="center">
 	<img src="./outputs/obj_acc.png">
 </p>
-Noobject accuracy:
+Train no object accuracy:
  <p align="center">
 	<img src="./outputs/noobj_acc.png">
+</p>
+Val class accuracy:
+ <p align="center">
+	<img src="./outputs/val_class_acc.png">
+</p>
+Val object accuracy:
+ <p align="center">
+	<img src="./outputs/val_obj_acc.png">
+</p>
+Val no object accuracy:
+ <p align="center">
+	<img src="./outputs/val_no_obj_acc.png">
 </p>
 Najlepšie parametre boli vybrané podľa najmenšej validačnej stratovej funkcie. Vizualizácia pre hyperparameter search:
  <p align="center">
